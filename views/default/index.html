@@ -50,19 +50,19 @@
 	<script>	
 		var rec = false;
 		var final_transcript = '';
-
+		//seu navegador é compatível?
 		if (!('webkitSpeechRecognition' in window)) {
 			mic.style.opacity = 0.2;
 		} else {
 			var recognition = new webkitSpeechRecognition();
 			recognition.continuous = true;
 			recognition.interimResults = true;
-			//
+			//evento onstart 
 			recognition.onstart = function(event) { 
 				rec = true;
 				mic.style.opacity = 1;
 			}
-
+			//evento de erros
 			recognition.onerror = function(event) {
 			    if (event.error == 'no-speech') {
 			      console.log('info_no_speech');
@@ -79,6 +79,7 @@
 			      }
 			    }
 			};
+			//evento onresult
 			var palavras;
 			recognition.onresult = function(event) {
 				   var interim_transcript = "";
@@ -122,8 +123,7 @@
 				      }
 				    }				    
 			};
-
-
+			//evento do click no botão do mic
 			mic.addEventListener('click',function(){
 				if (rec) {
 					recognition.stop();
@@ -132,7 +132,6 @@
 				}
 				
 			})
-		};	
-
+		};//fim: seu navegador é compatível?	
 	</script>
 </div>	
