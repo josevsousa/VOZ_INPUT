@@ -1,0 +1,138 @@
+{{extend 'layout.html'}}
+
+	<style>	
+		button:focus, button:active{ outline-offset:none !important; outline:none !important;}
+		#alerta_A,#alerta_B{display:none;}
+		.verme{
+			background-color: red;
+		}
+		input#vozInput {
+		    font-size: 22px;
+		    padding: 24px 14px;
+		}
+		#mic{
+		    position: relative;
+		    float: right;
+		    margin: -42px 9px;
+		    width: 33px;	
+		    opacity: 0.5;
+		}
+		@keyframes mm{
+		    from {width: 85%;}
+		    to {width: 30%;}
+		}	
+		.painel{padding: 0 7.5%;}
+	</style>
+	<div class="container">
+<!--div class="alert alert-success" role="alert">...</div>
+<div class="alert alert-info" role="alert">...</div>
+<div class="alert alert-warning" role="alert">...</div>
+<div class="alert alert-danger" role="alert">...</div-->
+<div class="alerta">
+	
+</div>
+
+	<br>	
+	<br>	
+	<div class="alert alert-danger 	" id="alerta_B" role="alert"></div>
+	<div class="well center-block" id="ddd" style="max-width:85%">
+	    <input type="text" class="form-control " id="vozInput" placeholder="Fale que eu digito">
+    	<img id="mic" src="{{=URL('static','images/mic.png')}}" alt="">
+   	</div>
+   	<div class="painel">
+   		<blockquote>
+  			<p>Comando de voz, CLick no mic no canto direito do input, e começe a falar!</p>
+  			<footer>Palavra: <strong>Stop</strong> <cite title="Source Title"> ( Fecha o comando de voz e limpa o conteudo )</cite></footer>
+  			<footer>Palavra: <strong>Corrigir</strong> <cite title="Source Title"> ( Apaga a última palavra escrita )</cite></footer>
+		</blockquote>
+   	</div>
+	
+	<script>	
+		var rec = false;
+		var final_transcript = '';
+
+		if (!('webkitSpeechRecognition' in window)) {
+			mic.style.opacity = 0.2;
+		} else {
+			var recognition = new webkitSpeechRecognition();
+			recognition.continuous = true;
+			recognition.interimResults = true;
+			//
+			recognition.onstart = function(event) { 
+				rec = true;
+				mic.style.opacity = 1;
+			}
+
+			recognition.onerror = function(event) {
+			    if (event.error == 'no-speech') {
+			      console.log('info_no_speech');
+			    }
+			    if (event.error == 'audio-capture') {
+			      console.log('info_no_microphone');
+			
+			    }
+			    if (event.error == 'not-allowed') {
+			      if (event.timeStamp - start_timestamp < 100) {
+			        console.log('info_blocked');
+			      } else {
+			        console.log('info_denied');
+			      }
+			    }
+			};
+			var palavras;
+			recognition.onresult = function(event) {
+				   var interim_transcript = "";
+			       if (typeof(event.results) == 'undefined') {
+				      recognition.onend = null;
+				      recognition.stop();
+				      return;
+				    }
+				    for (var i = event.resultIndex; i < event.results.length; ++i) {
+				      if (event.results[i].isFinal) {
+				       	final_transcript += event.results[i][0].transcript;
+				       	palavras = final_transcript.split(' ');
+				      	//if B
+				      	var ultimaPalavra = palavras[(palavras.length)-1];
+				      	if (ultimaPalavra == 'corrigir') {
+				      		console.log(palavras+' 1');
+				      		palavras.pop();
+				      		palavras.pop();
+				      		console.log(palavras+' 2');
+				      		vozInput.value = palavras.join(' ');
+				      	}else{
+					        if (ultimaPalavra == 'stop') {
+					        	recognition.stop();
+								vozInput.value = '';
+								final_transcript = '';
+								palavras = '';
+								rec = false;
+								mic.style.opacity = 0.5;
+
+					        	console.log("aqui 1");
+
+					        }else{
+					        	
+					        	console.log("aqui 3");
+					        	vozInput.value = palavras.join(' ');
+					        }
+					    }//fim do if B     
+					    final_transcript = palavras.join(' ');	
+				       } else {
+				        interim_transcript += event.results[i][0].transcript;
+				      }
+				    }				    
+			};
+
+
+			mic.addEventListener('click',function(){
+				if (rec) {
+					recognition.stop();
+				}else{
+					recognition.start();
+				}
+				
+			})
+		};	
+
+	</script>
+</div>	
