@@ -95,29 +95,24 @@
 				      	//if B
 				      	var ultimaPalavra = palavras[(palavras.length)-1];
 				      	if (ultimaPalavra == 'corrigir') {
-				      		console.log(palavras+' 1');
 				      		palavras.pop();
 				      		palavras.pop();
-				      		console.log(palavras+' 2');
 				      		vozInput.value = palavras.join(' ');
+				      		final_transcript = palavras.join(' ');
 				      	}else{
 					        if (ultimaPalavra == 'stop') {
 					        	recognition.stop();
 								vozInput.value = '';
 								final_transcript = '';
-								palavras = '';
+								palavras = ' ';
 								rec = false;
 								mic.style.opacity = 0.5;
-
-					        	console.log("aqui 1");
-
-					        }else{
-					        	
-					        	console.log("aqui 3");
+				        }else{
 					        	vozInput.value = palavras.join(' ');
+					        	final_transcript = palavras.join(' ');
 					        }
 					    }//fim do if B     
-					    final_transcript = palavras.join(' ');	
+					    	
 				       } else {
 				        interim_transcript += event.results[i][0].transcript;
 				      }
